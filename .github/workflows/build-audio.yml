@@ -14,8 +14,6 @@ jobs:
           sudo apt-get install -y nasm yasm build-essential pkg-config autoconf automake libtool git gettext cmake
       - name: Android NDK Kurulumu
         uses: android-actions/setup-android@v3
-        with:
-          cmdline-tools-version: 11076782
       - name: FFmpeg Ayarlarını Yamala (Video Bileşenlerini Kapat)
         run: |
           # Bu komut ffmpeg.sh dosyasını düzenleyerek video ile ilgili her şeyi kapatır.
