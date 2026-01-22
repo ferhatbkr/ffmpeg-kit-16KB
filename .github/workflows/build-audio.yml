@@ -21,17 +21,18 @@ jobs:
 
       - name: FFmpeg Ayarlarını Yamala (Video Bileşenlerini Kapat)
         run: |
-          # Bu komut ffmpeg.sh dosyasını düzenleyerek video ile ilgili her şeyi kapatır.
           sed -i 's/--disable-autodetect/--disable-video --disable-encoders --enable-encoder=aac --disable-decoders --enable-decoder=aac --enable-decoder=mp3 --enable-decoder=flac --enable-decoder=opus --enable-decoder=vorbis --enable-decoder=dca --enable-decoder=truehd --enable-decoder=ac3 --enable-decoder=eac3 --enable-decoder=pcm_s16le --disable-muxers --enable-muxer=mp4 --enable-muxer=matroska --disable-demuxers --enable-demuxer=matroska --enable-demuxer=mov --enable-demuxer=aac --enable-demuxer=mp3 --enable-demuxer=flac --enable-demuxer=ogg --enable-demuxer=wav --enable-demuxer=dts --enable-demuxer=ac3 --enable-demuxer=eac3 --disable-doc --disable-devices --disable-postproc --disable-avfilter --enable-avfilter=aresample --disable-swscale --disable-network --disable-autodetect/' scripts/android/ffmpeg.sh
-          
-          echo "Yama uygulandı. Kontrol ediliyor..."
-          grep "disable-video" scripts/android/ffmpeg.sh
 
       - name: FFmpeg-Kit Derlemesini Başlat
         run: |
-          # Sistemdeki değişkenleri (ANDROID_HOME) scriptin beklediği isimlere (ANDROID_SDK_ROOT) ata
-          export ANDROID_SDK_ROOT=$ANDROID_HOME
-          export ANDROID_NDK_ROOT=$ANDROID_NDK_HOME
+          # Ubuntu runner'larında standart yolları elle tanımlıyoruz
+          export ANDROID_SDK_ROOT=/usr/local/lib/android/sdk
+          
+          # NDK'yı bul (En son sürümü seç)
+          export ANDROID_NDK_ROOT=$(ls -d $ANDROID_SDK_ROOT/ndk/* | sort -V | tail -n 1)
+          
+          echo "SDK Path: $ANDROID_SDK_ROOT"
+          echo "NDK Path: $ANDROID_NDK_ROOT"
           
           chmod +x android.sh
           
