@@ -7,6 +7,12 @@ jobs:
   build:
     name: Build FFmpeg-Kit (Audio Only)
     runs-on: ubuntu-latest
+    
+    # Copilot'un önerdiği DÜZELTME:
+    # Değişkenleri burada tanımlıyoruz ki tüm adımlar erişebilsin.
+    env:
+      ANDROID_SDK_ROOT: ${{ env.ANDROID_HOME }}
+      ANDROID_NDK_ROOT: ${{ env.ANDROID_NDK_HOME }}
 
     steps:
       - name: Depoyu Çek (Checkout)
@@ -17,26 +23,25 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y nasm yasm build-essential pkg-config autoconf automake libtool git gettext cmake
 
-      # Setup Android adımını kaldırdık, pre-installed NDK kullanıyoruz.
-
       - name: FFmpeg Ayarlarını Yamala (Video Bileşenlerini Kapat)
         run: |
           sed -i 's/--disable-autodetect/--disable-video --disable-encoders --enable-encoder=aac --disable-decoders --enable-decoder=aac --enable-decoder=mp3 --enable-decoder=flac --enable-decoder=opus --enable-decoder=vorbis --enable-decoder=dca --enable-decoder=truehd --enable-decoder=ac3 --enable-decoder=eac3 --enable-decoder=pcm_s16le --disable-muxers --enable-muxer=mp4 --enable-muxer=matroska --disable-demuxers --enable-demuxer=matroska --enable-demuxer=mov --enable-demuxer=aac --enable-demuxer=mp3 --enable-demuxer=flac --enable-demuxer=ogg --enable-demuxer=wav --enable-demuxer=dts --enable-demuxer=ac3 --enable-demuxer=eac3 --disable-doc --disable-devices --disable-postproc --disable-avfilter --enable-avfilter=aresample --disable-swscale --disable-network --disable-autodetect/' scripts/android/ffmpeg.sh
+          
+          echo "Yama uygulandı."
 
       - name: FFmpeg-Kit Derlemesini Başlat
         run: |
-          # Ubuntu runner'larında standart yolları elle tanımlıyoruz
-          export ANDROID_SDK_ROOT=/usr/local/lib/android/sdk
-          
-          # NDK'yı bul (En son sürümü seç)
-          export ANDROID_NDK_ROOT=$(ls -d $ANDROID_SDK_ROOT/ndk/* | sort -V | tail -n 1)
-          
-          echo "SDK Path: $ANDROID_SDK_ROOT"
-          echo "NDK Path: $ANDROID_NDK_ROOT"
-          
           chmod +x android.sh
           
-          # Sadece gerekli ses kütüphanelerini etkinleştirerek derlemeyi başlat
+          # NDK Root kontrolü (Ek güvenlik için)
+          if [ -z "$ANDROID_NDK_ROOT" ]; then
+             echo "UYARI: ANDROID_NDK_ROOT boş geldi, manuel bulunmaya çalışılıyor..."
+             export ANDROID_NDK_ROOT=$(ls -d $ANDROID_SDK_ROOT/ndk/* | sort -V | tail -n 1)
+          fi
+          
+          echo "SDK: $ANDROID_SDK_ROOT"
+          echo "NDK: $ANDROID_NDK_ROOT"
+          
           ./android.sh --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libsoxr --enable-libopencore-amr --enable-libshine --enable-libtwolame --enable-libspeex --force
 
       - name: AAR Dosyasını Yükle (Upload Artifact)
