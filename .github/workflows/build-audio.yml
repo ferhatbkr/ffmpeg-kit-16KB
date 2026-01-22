@@ -8,8 +8,8 @@ jobs:
     name: Build FFmpeg-Kit (Audio Only)
     runs-on: ubuntu-latest
     
-    # Copilot'un önerdiği DÜZELTME:
-    # Değişkenleri burada tanımlıyoruz ki tüm adımlar erişebilsin.
+    # KESİN ÇÖZÜM: Değişkenleri burada tanımlıyoruz.
+    # Böylece tüm adımlar ve scriptler bu değişkenlere erişebilir.
     env:
       ANDROID_SDK_ROOT: ${{ env.ANDROID_HOME }}
       ANDROID_NDK_ROOT: ${{ env.ANDROID_NDK_HOME }}
@@ -33,7 +33,7 @@ jobs:
         run: |
           chmod +x android.sh
           
-          # NDK Root kontrolü (Ek güvenlik için)
+          # NDK Root kontrolü (Ekstra güvenlik için)
           if [ -z "$ANDROID_NDK_ROOT" ]; then
              echo "UYARI: ANDROID_NDK_ROOT boş geldi, manuel bulunmaya çalışılıyor..."
              export ANDROID_NDK_ROOT=$(ls -d $ANDROID_SDK_ROOT/ndk/* | sort -V | tail -n 1)
