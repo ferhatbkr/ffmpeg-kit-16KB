@@ -12,8 +12,9 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y nasm yasm build-essential pkg-config autoconf automake libtool git gettext cmake
-      - name: Android NDK Kurulumu
-        uses: android-actions/setup-android@v3
+      # setup-android aksiyonu hata verdiği için kaldırdık.
+      # GitHub Runner'larında NDK zaten yüklü geliyor.
+      
       - name: FFmpeg Ayarlarını Yamala (Video Bileşenlerini Kapat)
         run: |
           # Bu komut ffmpeg.sh dosyasını düzenleyerek video ile ilgili her şeyi kapatır.
@@ -24,8 +25,8 @@ jobs:
           grep "disable-video" scripts/android/ffmpeg.sh
       - name: FFmpeg-Kit Derlemesini Başlat
         env:
-          ANDROID_SDK_ROOT: ${{ env.ANDROID_HOME }}
-          ANDROID_NDK_ROOT: ${{ env.ANDROID_HOME }}/ndk-bundle
+          ANDROID_SDK_ROOT: ${{ env.ANDROID_SDK_ROOT }}
+          ANDROID_NDK_ROOT: ${{ env.ANDROID_NDK_HOME }}
         run: |
           chmod +x android.sh
           # Sadece gerekli ses kütüphanelerini etkinleştirerek derlemeyi başlat
